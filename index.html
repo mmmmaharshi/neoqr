@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neobrutalist QR Code Generator | Free & Instant URL to QR</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Quickly generate, download, and save QR codes for any URL with this free, easy-to-use QR code generator featuring a bold Neobrutalist design. No sign-up required.">
+    <meta name="keywords" content="qr code generator, qr code, url to qr, free qr code, neobrutalism, web app, qr generator, link to qr code">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://your-domain.com/index.html" /> <!-- Replace with your actual domain -->
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-domain.com/index.html"> <!-- Replace with your actual domain -->
+    <meta property="og:title" content="Neobrutalist QR Code Generator | Free & Instant URL to QR">
+    <meta property="og:description" content="A free, fast, and stylish QR code generator with a unique Neobrutalist design.">
+    <meta property="og:image" content="https://placehold.co/1200x630/FBBF24/1E293B?text=QR+Code+Generator">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://your-domain.com/index.html"> <!-- Replace with your actual domain -->
+    <meta property="twitter:title" content="Neobrutalist QR Code Generator | Free & Instant URL to QR">
+    <meta property="twitter:description" content="A free, fast, and stylish QR code generator with a unique Neobrutalist design.">
+    <meta property="twitter:image" content="https://placehold.co/1200x630/FBBF24/1E293B?text=QR+Code+Generator">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔳</text></svg>">
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- QR Code generation library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
+    <style>
+        /* Using Sora font */
+        body {
+            font-family: 'Sora', sans-serif;
+        }
+        /* Custom styles for the QR code canvas to ensure it's displayed correctly */
+        #qrcode-container canvas, .history-item canvas {
+            display: block;
+            margin: auto;
+        }
+        /* Style for the generated QR image */
+        #qrcode-container img, .history-item img {
+            display: block;
+            margin: auto;
+            border: 2px solid black; /* Sharp border */
+            border-radius: 0.25rem; /* Slightly rounded corners */
+        }
+        /* Button active state for a pressed-in feel */
+        .neo-button:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body class="bg-yellow-300 text-slate-800 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-lg mx-auto">
+        <div class="bg-white rounded-xl p-6 md:p-8 border-4 border-black shadow-[8px_8px_0px_#000]">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-black">QR Code Generator</h1>
+                <p class="text-slate-600 mt-2 font-medium">Neobrutalism Edition / Paste a URL</p>
+            </div>
+
+            <!-- Input and Generate Button -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                <input type="text" id="url-input" placeholder="https://example.com" class="flex-grow w-full px-4 py-3 bg-white border-2 border-black rounded-lg focus:outline-none focus:ring-4 focus:ring-yellow-300 transition duration-200 font-medium">
+                <button id="generate-btn" class="neo-button bg-lime-400 text-black font-bold py-3 px-6 rounded-lg border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
+                    Generate
+                </button>
+            </div>
+
+            <!-- Main QR Code Display -->
+            <div id="qrcode-wrapper" class="text-center">
+                <div id="qrcode-container" class="w-full min-h-[220px] bg-yellow-100 rounded-lg flex items-center justify-center p-4 border-2 border-black transition-all duration-300">
+                     <p id="placeholder-text" class="text-slate-500 font-semibold">Your QR Code will appear here</p>
+                </div>
+                <p id="generated-url-display" class="mt-3 text-slate-600 font-medium break-all hidden"></p>
+                <a id="download-link" class="neo-button hidden mt-4 inline-block bg-blue-500 text-white font-bold py-2 px-5 rounded-lg border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">Download QR Code</a>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div id="history-section" class="w-full max-w-lg mx-auto mt-12">
+            <h2 class="text-2xl font-bold text-center mb-6 text-black">Generation History</h2>
+            <div id="history-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- History items will be injected here -->
+            </div>
+            <div class="text-center mt-6">
+                 <button id="clear-history-btn" class="neo-button hidden bg-red-500 text-white font-bold py-2 px-5 rounded-lg border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">Clear History</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('url-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const qrCodeContainer = document.getElementById('qrcode-container');
+        const placeholderText = document.getElementById('placeholder-text');
+        const generatedUrlDisplay = document.getElementById('generated-url-display');
+        const historyContainer = document.getElementById('history-container');
+        const historySection = document.getElementById('history-section');
+        const clearHistoryBtn = document.getElementById('clear-history-btn');
+        const downloadLink = document.getElementById('download-link');
+
+        const STORAGE_KEY = 'qrCodeHistory';
+
+        // --- Core Functions ---
+
+        /**
+         * Generates and displays a QR code.
+         * @param {string} url - The URL to encode.
+         * @param {HTMLElement} container - The element to render the QR code in.
+         * @param {number} size - The size of the QR code in pixels.
+         */
+        const generateQRCode = (url, container, size = 200) => {
+            container.innerHTML = ''; // Clear previous QR code
+            new QRCode(container, {
+                text: url,
+                width: size,
+                height: size,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        };
+
+        /**
+         * Updates the main display with a new QR code.
+         */
+        const handleGenerate = () => {
+            const url = urlInput.value.trim();
+            if (!url) {
+                console.warn("Input URL is empty.");
+                urlInput.focus();
+                return;
+            }
+
+            placeholderText.classList.add('hidden');
+            generateQRCode(url, qrCodeContainer, 200);
+            generatedUrlDisplay.textContent = url;
+            generatedUrlDisplay.classList.remove('hidden');
+
+            // Wait for the QR code image to be generated
+            setTimeout(() => {
+                const img = qrCodeContainer.querySelector('img');
+                if (img) {
+                    downloadLink.href = img.src;
+                    downloadLink.download = `qrcode-${Date.now()}.png`;
+                    downloadLink.classList.remove('hidden');
+                }
+            }, 100);
+
+
+            saveToHistory(url);
+            loadHistory();
+            urlInput.value = ''; // Clear the input field
+        };
+
+        // --- Local Storage & History ---
+
+        /**
+         * Saves a new URL to the history in localStorage.
+         * @param {string} url - The URL to save.
+         */
+        const saveToHistory = (url) => {
+            let history = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            // Add to the beginning and avoid duplicates
+            if (!history.includes(url)) {
+                history.unshift(url);
+            }
+            // Limit history to 10 items
+            if (history.length > 10) {
+                history = history.slice(0, 10);
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+        };
+
+        /**
+         * Loads and displays the QR code history from localStorage.
+         */
+        const loadHistory = () => {
+            const history = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            historyContainer.innerHTML = ''; // Clear current display
+
+            if (history.length > 0) {
+                historySection.classList.remove('hidden');
+                clearHistoryBtn.classList.remove('hidden');
+            } else {
+                historySection.classList.add('hidden');
+                clearHistoryBtn.classList.add('hidden');
+                return;
+            }
+
+            history.forEach(url => {
+                const itemWrapper = document.createElement('div');
+                itemWrapper.className = 'history-item bg-white p-3 rounded-lg border-2 border-black shadow-[4px_4px_0px_#000] text-center flex flex-col items-center justify-center cursor-pointer hover:bg-yellow-100 transition-all';
+                itemWrapper.addEventListener('click', () => displayHistoryQR(url));
+
+                const qrWrapper = document.createElement('div');
+                qrWrapper.className = 'mb-2';
+                generateQRCode(url, qrWrapper, 100);
+
+                const urlText = document.createElement('p');
+                urlText.textContent = url;
+                urlText.className = 'text-xs text-slate-600 break-all font-medium';
+
+                itemWrapper.appendChild(qrWrapper);
+                itemWrapper.appendChild(urlText);
+                historyContainer.appendChild(itemWrapper);
+            });
+        };
+
+        /**
+         * Displays a selected QR code from history in the main view.
+         * @param {string} url - The URL from the history item.
+         */
+        const displayHistoryQR = (url) => {
+            urlInput.value = url;
+
+            placeholderText.classList.add('hidden');
+            generateQRCode(url, qrCodeContainer, 200);
+            generatedUrlDisplay.textContent = url;
+            generatedUrlDisplay.classList.remove('hidden');
+
+            setTimeout(() => {
+                const img = qrCodeContainer.querySelector('img');
+                if (img) {
+                    downloadLink.href = img.src;
+                    downloadLink.download = `qrcode-${Date.now()}.png`;
+                    downloadLink.classList.remove('hidden');
+                }
+            }, 100);
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+
+        /**
+         * Clears all items from the history.
+         */
+        const clearHistory = () => {
+             localStorage.removeItem(STORAGE_KEY);
+             loadHistory();
+             // Reset main display
+             qrCodeContainer.innerHTML = '<p id="placeholder-text" class="text-slate-500 font-semibold">Your QR Code will appear here</p>';
+             generatedUrlDisplay.classList.add('hidden');
+             generatedUrlDisplay.textContent = '';
+             downloadLink.classList.add('hidden');
+        };
+
+
+        // --- Event Listeners ---
+
+        generateBtn.addEventListener('click', handleGenerate);
+        urlInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                handleGenerate();
+            }
+        });
+        clearHistoryBtn.addEventListener('click', clearHistory);
+
+        // --- Initial Load ---
+
+        document.addEventListener('DOMContentLoaded', loadHistory);
+
+    </script>
+</body>
+</html>
