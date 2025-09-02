@@ -130,20 +130,28 @@
         console.error("QR generation failed", err);
       }
     };
-
     const handleGenerate = async () => {
       const url = urlInput.value.trim();
       if (!url) { urlInput.focus(); return; }
-
+    
+      try {
+        new URL(url); // validate
+      } catch {
+        alert("Please enter a valid URL (e.g. https://example.com)");
+        urlInput.focus();
+        return;
+      }
+    
       placeholderText.classList.add('hidden');
-      await generateQRCode(url, qrCodeContainer, 200, true);
+      await generateQRCode(url, qrCodeContainer, 200);
       generatedUrlDisplay.textContent = url;
       generatedUrlDisplay.classList.remove('hidden');
-
+    
       saveToHistory(url);
       loadHistory();
       urlInput.value = '';
     };
+
 
     const saveToHistory = (url) => {
       let history = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
